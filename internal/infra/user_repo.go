@@ -10,6 +10,8 @@ import (
 	"github.com/sunr3d/basic-marketplace/models"
 )
 
+var _ interfaces.UserRepo = (*UserRepoPG)(nil)
+
 type UserRepoPG struct {
 	db *gorm.DB
 }
