@@ -34,6 +34,7 @@ func Run(cfg *config.Config, log *zap.Logger) error {
 	router.Use(gin.Recovery())
 
 	router.GET("/ping", handlers.PingHandler(log))
+	router.POST("/register", handlers.RegisterHandler(container.UserService, log))
 
 	addr := fmt.Sprintf("%s:%s", cfg.HTTPHost, cfg.HTTPPort)
 	go func() {
