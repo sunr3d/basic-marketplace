@@ -9,11 +9,27 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
+	"github.com/sunr3d/basic-marketplace/internal/bootstrap"
 	"github.com/sunr3d/basic-marketplace/internal/config"
 	"github.com/sunr3d/basic-marketplace/internal/handlers"
+	"github.com/sunr3d/basic-marketplace/models"
 )
 
 func Run(cfg *config.Config, log *zap.Logger) error {
+	/// 1. Слой репозиториев (infra)
+	// Создание контейнера зависимостей (Dependency Injection) + миграция
+	container, err := bootstrap.NewContainer(cfg, log)
+	if err != nil {
+		return fmt.Errorf("bootstrap.NewContainer: %w", err)
+	}
+	log.Info("Контейнер зависимостей успешно создан")
+
+	if err := container.DB.AutoMigrate(&models.User{}); err != nil {
+		return fmt.Errorf("db.AutoMigrate: %w", err)
+	}
+	log.Info("Миграция модели User прошла успешно")
+
+	// ЧТО-ТО
 	router := gin.New()
 	router.Use(gin.Recovery())
 
