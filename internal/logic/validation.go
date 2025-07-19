@@ -9,7 +9,7 @@ import (
 const (
 	minLoginLen  = 4
 	maxLoginLen  = 32
-	loginPattern = "^[a-zA-Z0-9_]+$"
+	loginPattern = "^[a-zA-Z0-9_\\-]+$"
 
 	minPasswordLen  = 8
 	maxPasswordLen  = 64

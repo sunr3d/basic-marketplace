@@ -38,3 +38,6 @@ docker-compose.override.yml
 
 # History
 .history/
+
+# Mocks
+mocks/
