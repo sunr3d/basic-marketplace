@@ -1,9 +1,11 @@
 package logic
 
 import (
+	"errors"
 	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 
 	"github.com/sunr3d/basic-marketplace/internal/interfaces"
 	"github.com/sunr3d/basic-marketplace/models"
@@ -27,8 +29,11 @@ func (s *userService) RegisterUser(login, password string) error {
 		return fmt.Errorf("validatePassword: %w", err)
 	}
 
-	_, err := s.UserRepo.GetUserByLogin(login)
-	if err == nil {
+	user, err := s.UserRepo.GetUserByLogin(login)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return fmt.Errorf("GetUserByLogin: %w", err)
+	}
+	if user != nil {
 		return fmt.Errorf("пользователь \"%s\" уже существует", login)
 	}
 
@@ -37,7 +42,7 @@ func (s *userService) RegisterUser(login, password string) error {
 		return fmt.Errorf("не удалось захэшировать пароль: %w", err)
 	}
 
-	user := &models.User{
+	user = &models.User{
 		Login:        login,
 		PasswordHash: string(hash),
 	}
