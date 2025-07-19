@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+
 	"github.com/sunr3d/basic-marketplace/internal/interfaces"
 	"github.com/sunr3d/basic-marketplace/models"
-	"gorm.io/gorm"
 )
 
 type UserRepoPG struct {
