@@ -21,30 +21,35 @@ func NewUserService(userRepo interfaces.UserRepo) interfaces.UserService {
 	return &userService{UserRepo: userRepo}
 }
 
-func (s *userService) RegisterUser(login, password string) error {
+func (s *userService) RegisterUser(login, password string) (*models.User, error) {
 	if err := validateLogin(login); err != nil {
-		return fmt.Errorf("validateLogin: %w", err)
+		return nil, fmt.Errorf("validateLogin: %w", err)
 	}
 	if err := validatePassword(password); err != nil {
-		return fmt.Errorf("validatePassword: %w", err)
+		return nil, fmt.Errorf("validatePassword: %w", err)
 	}
 
 	user, err := s.UserRepo.GetUserByLogin(login)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return fmt.Errorf("GetUserByLogin: %w", err)
+		return nil, fmt.Errorf("GetUserByLogin: %w", err)
 	}
 	if user != nil {
-		return fmt.Errorf("пользователь \"%s\" уже существует", login)
+		return nil, fmt.Errorf("пользователь \"%s\" уже существует", login)
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return fmt.Errorf("не удалось захэшировать пароль: %w", err)
+		return nil, fmt.Errorf("не удалось захэшировать пароль: %w", err)
 	}
 
 	user = &models.User{
 		Login:        login,
 		PasswordHash: string(hash),
 	}
-	return s.UserRepo.CreateUser(user)
+	err = s.UserRepo.CreateUser(user)
+	if err != nil {
+		return nil, fmt.Errorf("CreateUser: %w", err)
+	}
+	
+	return user, nil
 }
