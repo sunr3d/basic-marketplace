@@ -11,13 +11,16 @@ import (
 )
 
 func main() {
+	// Загружаем конфиг из .env, либо дефолтные значения
 	cfg, err := config.GetConfigFromEnv()
 	if err != nil {
 		log.Fatalf("config.GetConfigFromEnv: %s\n", err.Error())
 	}
 
+	// Создание логгера
 	zapLogger := logger.New(cfg.LogLevel)
 
+	// Точка входа в приложение
 	if err = entrypoint.Run(cfg, zapLogger); err != nil {
 		zapLogger.Fatal("entrypoint.Run: ", zap.Error(err))
 	}
