@@ -1,7 +1,7 @@
 package config
 
 type Config struct {
-	HTTPHost         string   `envconfig:"HTTP_HOST" default:"localhost"`
+	HTTPHost         string   `envconfig:"HTTP_HOST" default:"0.0.0.0"`
 	HTTPPort         string   `envconfig:"HTTP_PORT" default:"8080"`
 	HTTPReadTimeout  int      `envconfig:"HTTP_READ_TIMEOUT" default:"10"`
 	HTTPWriteTimeout int      `envconfig:"HTTP_WRITE_TIMEOUT" default:"10"`
