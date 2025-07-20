@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/sunr3d/basic-marketplace/internal/interfaces"
+	"github.com/sunr3d/basic-marketplace/internal/pkg/utils"
 	"github.com/sunr3d/basic-marketplace/models"
 )
 
@@ -15,10 +16,11 @@ var _ interfaces.UserService = (*userService)(nil)
 
 type userService struct {
 	UserRepo interfaces.UserRepo
+	JWTSecret []byte
 }
 
-func NewUserService(userRepo interfaces.UserRepo) interfaces.UserService {
-	return &userService{UserRepo: userRepo}
+func NewUserService(userRepo interfaces.UserRepo, jwtSecret []byte) interfaces.UserService {
+	return &userService{UserRepo: userRepo, JWTSecret: jwtSecret}
 }
 
 func (s *userService) RegisterUser(login, password string) (*models.User, error) {
@@ -52,4 +54,25 @@ func (s *userService) RegisterUser(login, password string) (*models.User, error)
 	}
 	
 	return user, nil
+}
+
+func (s *userService) AuthUser(login, password string) (string, error) {
+	user, err := s.UserRepo.GetUserByLogin(login)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return "", fmt.Errorf("неверный логин или пароль")
+		}
+		return "", fmt.Errorf("не удалось авторизоваться: %w", err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		return "", fmt.Errorf("неверный логин или пароль")
+	}
+
+	token, err := utils.GenerateJWT(user.ID, user.Login, s.JWTSecret)
+	if err != nil {
+		return "", fmt.Errorf("не удалось сгенерировать токен: %w", err)
+	}
+	
+	return token, nil
 }
