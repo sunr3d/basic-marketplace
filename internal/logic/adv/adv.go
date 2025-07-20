@@ -33,6 +33,29 @@ func (s *advService) CreateAd(input interfaces.AdInput) (*models.Adv, error) {
 }
 
 func (s *advService) ShowAdsFeed(filter interfaces.AdvFilter, currentUserID uint) ([]interfaces.AdvFeedItem, error) {
-	// TODO: Пока заглушка
-	return nil, nil
+	if err := validateAdvFilter(filter); err != nil {
+		return nil, fmt.Errorf("validateAdvFilter: %w", err)
+	}
+	
+	ads, err := s.AdvRepo.FindMany(filter)
+	if err != nil {
+		return nil, fmt.Errorf("FindMany: %w", err)
+	}
+
+	var feed []interfaces.AdvFeedItem
+	for _, adv := range ads {
+		feed = append(feed, interfaces.AdvFeedItem{
+			AdvBase: interfaces.AdvBase{
+				Title: adv.Title,
+				Description: adv.Description,
+				ImageURL: adv.ImageURL,
+				Price: adv.Price,
+			},
+			ID: adv.ID,
+			OwnerLogin: adv.OwnerLogin,
+			IsOwner: adv.OwnerID == currentUserID,
+			CreatedAt: adv.CreatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+	return feed, nil
 }

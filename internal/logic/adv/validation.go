@@ -38,3 +38,22 @@ func validateAdInput(input interfaces.AdInput) error {
 
 	return nil
 }
+
+func validateAdvFilter(filter interfaces.AdvFilter) error {
+	if filter.MinPrice < 0 {
+		return fmt.Errorf("минимальная цена не может быть отрицательной")
+	}
+	if filter.MaxPrice < 0 {
+		return fmt.Errorf("максимальная цена не может быть отрицательной")
+	}
+	if filter.MinPrice > 0 && filter.MaxPrice > 0 && filter.MinPrice < filter.MaxPrice {
+		return fmt.Errorf("максимальная цена не может быть меньше минимальной")
+	}
+	if filter.SortBy != "" && filter.SortBy != "created_at" && filter.SortBy != "price" {
+		return fmt.Errorf("sort_by может быть только 'created_at' или 'price'")
+	}
+	if filter.Order != "" && filter.Order != "asc" && filter.Order != "desc" {
+		return fmt.Errorf("order может быть только 'asc' или 'desc'")
+	}
+	return nil
+}
