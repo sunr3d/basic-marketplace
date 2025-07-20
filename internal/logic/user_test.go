@@ -14,7 +14,7 @@ import (
 
 func TestRegisterUser_Success(t *testing.T) {
 	mockRepo := new(mocks.UserRepo)
-	service := NewUserService(mockRepo)
+	service := NewUserService(mockRepo, []byte("testsecret"))
 
 	mockRepo.On("GetUserByLogin", "newuser").Return(nil, gorm.ErrRecordNotFound)
 	mockRepo.On("CreateUser", mock.AnythingOfType("*models.User")).Return(nil)
@@ -28,7 +28,7 @@ func TestRegisterUser_Success(t *testing.T) {
 
 func TestRegisterUser_AlreadyExists(t *testing.T) {
 	mockRepo := new(mocks.UserRepo)
-	service := NewUserService(mockRepo)
+	service := NewUserService(mockRepo, []byte("testsecret"))
 
 	mockRepo.On("GetUserByLogin", "existinguser").Return(&models.User{Login: "existinguser"}, nil)
 
@@ -41,7 +41,7 @@ func TestRegisterUser_AlreadyExists(t *testing.T) {
 
 func TestRegisterUser_InvalidLogin(t *testing.T) {
 	mockRepo := new(mocks.UserRepo)
-	service := NewUserService(mockRepo)
+	service := NewUserService(mockRepo, []byte("testsecret"))
 
 	user, err := service.RegisterUser("ab", "ValidPass123!")
 	assert.Error(t, err)
@@ -53,7 +53,7 @@ func TestRegisterUser_InvalidLogin(t *testing.T) {
 
 func TestRegisterUser_InvalidPassword(t *testing.T) {
 	mockRepo := new(mocks.UserRepo)
-	service := NewUserService(mockRepo)
+	service := NewUserService(mockRepo, []byte("testsecret"))
 
 	user, err := service.RegisterUser("validuser", "short")
 	assert.Error(t, err)
@@ -65,7 +65,7 @@ func TestRegisterUser_InvalidPassword(t *testing.T) {
 
 func TestRegisterUser_RepoErrorOnGetUser(t *testing.T) {
 	mockRepo := new(mocks.UserRepo)
-	service := NewUserService(mockRepo)
+	service := NewUserService(mockRepo, []byte("testsecret"))
 
 	mockRepo.On("GetUserByLogin", "user1").Return(nil, fmt.Errorf("ошибка БД"))
 
@@ -78,7 +78,7 @@ func TestRegisterUser_RepoErrorOnGetUser(t *testing.T) {
 
 func TestRegisterUser_RepoErrorOnCreateUser(t *testing.T) {
 	mockRepo := new(mocks.UserRepo)
-	service := NewUserService(mockRepo)
+	service := NewUserService(mockRepo, []byte("testsecret"))
 
 	mockRepo.On("GetUserByLogin", "user2").Return(nil, gorm.ErrRecordNotFound)
 	mockRepo.On("CreateUser", mock.AnythingOfType("*models.User")).Return(fmt.Errorf("ошибка БД"))
