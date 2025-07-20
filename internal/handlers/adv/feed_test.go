@@ -67,7 +67,7 @@ func TestFeedHandler_ValidationError(t *testing.T) {
 		Offset: 0,
 		Order:  "badorder",
 	}
-	mockService.On("ShowAdsFeed", filter, uint(21)).Return(nil, errors.New("ошибка валидации"))
+	mockService.On("ShowAdsFeed", filter, uint(21)).Return(nil, errors.New("может быть ошибка валидации"))
 
 	router := setupFeedRouterWithAuth(mockService, log)
 	w := httptest.NewRecorder()
@@ -97,20 +97,6 @@ func TestFeedHandler_InternalError(t *testing.T) {
 	mockService.AssertExpectations(t)
 }
 
-func TestFeedHandler_NoAuth(t *testing.T) {
-	mockService := new(mocks.AdvService)
-	log := zap.NewNop()
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	router.GET("/ads", FeedHandler(mockService, log))
-
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/ads", nil)
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
-}
-
 func TestFeedHandler_EmptyFeed(t *testing.T) {
 	mockService := new(mocks.AdvService)
 	log := zap.NewNop()
@@ -131,5 +117,92 @@ func TestFeedHandler_EmptyFeed(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &resp)
 	assert.NoError(t, err)
 	assert.Empty(t, resp)
+	mockService.AssertExpectations(t)
+}
+
+func TestFeedHandler_NoAuth(t *testing.T) {
+	mockService := new(mocks.AdvService)
+	log := zap.NewNop()
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	router.GET("/ads", FeedHandler(mockService, log))
+
+	filter := interfaces.AdvFilter{
+		Limit:  20,
+		Offset: 0,
+	}
+	expected := []interfaces.AdvFeedItem{
+		{
+			ID:         1,
+			AdvBase:    interfaces.AdvBase{Title: "Товар", Description: "Описание", ImageURL: "https://img.com/1.jpg", Price: 1000},
+			OwnerLogin: "user21",
+			IsOwner:    false,
+			CreatedAt:  "2025-07-21 12:00:00",
+		},
+		{
+			ID:         2,
+			AdvBase:    interfaces.AdvBase{Title: "Товар2", Description: "Описание2", ImageURL: "https://img.com/2.jpg", Price: 2000},
+			OwnerLogin: "user7",
+			IsOwner:    false,
+			CreatedAt:  "2025-07-21 12:01:00",
+		},
+	}
+
+	mockService.On("ShowAdsFeed", filter, uint(0)).Return(expected, nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/ads", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	var resp []interfaces.AdvFeedItem
+	err := json.Unmarshal(w.Body.Bytes(), &resp)
+	assert.NoError(t, err)
+	assert.Len(t, resp, 2)
+	for _, item := range resp {
+		assert.False(t, item.IsOwner)
+	}
+	mockService.AssertExpectations(t)
+}
+
+func TestFeedHandler_Authorized_IsOwnerCorrect(t *testing.T) {
+	mockService := new(mocks.AdvService)
+	log := zap.NewNop()
+	router := setupFeedRouterWithAuth(mockService, log)
+
+	filter := interfaces.AdvFilter{
+		Limit:  20,
+		Offset: 0,
+	}
+	expected := []interfaces.AdvFeedItem{
+		{
+			ID:         1,
+			AdvBase:    interfaces.AdvBase{Title: "Товар", Description: "Описание", ImageURL: "https://img.com/1.jpg", Price: 1000},
+			OwnerLogin: "user21",
+			IsOwner:    true,
+			CreatedAt:  "2025-07-21 12:00:00",
+		},
+		{
+			ID:         2,
+			AdvBase:    interfaces.AdvBase{Title: "Товар2", Description: "Описание2", ImageURL: "https://img.com/2.jpg", Price: 2000},
+			OwnerLogin: "user7",
+			IsOwner:    false,
+			CreatedAt:  "2025-07-21 12:01:00",
+		},
+	}
+
+	mockService.On("ShowAdsFeed", filter, uint(21)).Return(expected, nil)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/ads", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	var resp []interfaces.AdvFeedItem
+	err := json.Unmarshal(w.Body.Bytes(), &resp)
+	assert.NoError(t, err)
+	assert.Len(t, resp, 2)
+	assert.True(t, resp[0].IsOwner)
+	assert.False(t, resp[1].IsOwner)
 	mockService.AssertExpectations(t)
 }

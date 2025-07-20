@@ -1,49 +1,214 @@
 # Basic Marketplace
 
-Тестовое задание для VK Tech, Backend Go developer.
+## Описание
 
-## Как запустить
+Backend REST API для маркетплейса объявлений.  
+Реализовано на Go с использованием Clean Architecture, Gin, GORM, JWT, bcrypt, zap, Docker.
+
+---
+
+## Быстрый старт
+
+### 1. Запуск через Docker
 
 ```bash
 docker-compose up --build
 ```
 
-## Технологии
+### 2. Локальный запуск
 
-- Go, Gin, GORM
-- PostgreSQL, Redis
-- JWT, Docker, Docker Compose
+```bash
+go run cmd/main.go
+```
 
-## Структура
-
-- cmd/ — точка входа
-- internal/ — бизнес-логика, обработчики, инфраструктура
-- models/ — основные структуры
-
-## Описание API
-
-TODO
+---
 
 ## Переменные окружения
 
-Для настройки приложения можно использовать переменные окружения или файл .env (см. .env.example):
+| Переменная        | Описание              | Пример значения |
+| ----------------- | --------------------- | --------------- |
+| POSTGRES_HOST     | Адрес Postgres        | localhost       |
+| POSTGRES_PORT     | Порт Postgres         | 5432            |
+| POSTGRES_USER     | Пользователь Postgres | postgres        |
+| POSTGRES_PASSWORD | Пароль Postgres       | password        |
+| POSTGRES_DB       | Имя БД                | marketplace     |
+| JWT_SECRET        | Секрет для JWT        | supersecret     |
+| HTTP_HOST         | Адрес HTTP-сервера    | 0.0.0.0         |
+| HTTP_PORT         | Порт HTTP-сервера     | 8080            |
 
-- `HTTP_HOST` — адрес, на котором слушает сервер (по умолчанию 0.0.0.0)
-- `HTTP_PORT` — порт сервера (по умолчанию 8080)
-- `LOG_LEVEL` — уровень логирования (debug, info, warn, error; по умолчанию debug)
+---
 
-**PostgreSQL:**
+## Архитектура
 
-- `POSTGRES_HOST` — адрес БД (по умолчанию localhost)
-- `POSTGRES_PORT` — порт БД (по умолчанию 5432)
-- `POSTGRES_USER` — пользователь БД (по умолчанию postgres)
-- `POSTGRES_PASSWORD` — пароль БД (по умолчанию postgres)
-- `POSTGRES_DATABASE` — имя БД (по умолчанию marketplace)
+- **Clean Architecture**:
+  - `models/` — структуры БД
+  - `interfaces/` — интерфейсы сервисов и репозиториев
+  - `infra/` — инфраструктурные реализации (Postgres, репозитории)
+  - `logic/` — бизнес-логика
+  - `handlers/` — HTTP-ручки
+  - `bootstrap/` — DI-контейнер
+  - `entrypoint/` — сборка и запуск приложения
+- **DI** через контейнер
+- **GORM** для работы с Postgres
+- **Gin** для HTTP API
+- **zap** для логирования
+- **testify, mockery** для тестов
 
-**Redis:**
+---
 
-- `REDIS_ADDR` — адрес Redis (по умолчанию localhost:6379)
-- `REDIS_PASSWORD` — пароль Redis (по умолчанию пусто)
-- `REDIS_DB` — номер базы Redis (по умолчанию 0)
+## API
 
-Если файл .env отсутствует, используются значения по умолчанию.
+### POST /register
+
+Регистрация пользователя
+
+**Request:**
+
+```json
+{
+  "login": "user1",
+  "password": "Password123!"
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": 1,
+  "login": "user1",
+  "created_at": "2024-07-21T12:00:00Z"
+}
+```
+
+---
+
+### POST /login
+
+Авторизация, получение JWT
+
+**Request:**
+
+```json
+{
+  "login": "user1",
+  "password": "Password123!"
+}
+```
+
+**Response:**
+
+```json
+{
+  "token": "jwt_token"
+}
+```
+
+---
+
+### POST /ads/create
+
+Создание объявления (требует авторизации)
+
+**Request:**
+
+```json
+{
+  "title": "Продам велосипед",
+  "description": "Почти новый",
+  "image_url": "https://example.com/image.jpg",
+  "price": 10000
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": 1,
+  "title": "Продам велосипед",
+  "description": "Почти новый",
+  "image_url": "https://example.com/image.jpg",
+  "price": 10000,
+  "owner_id": 1,
+  "created_at": "2024-07-21T12:00:00Z"
+}
+```
+
+---
+
+### GET /ads
+
+Лента объявлений (публичная)
+
+**Query params:**
+
+- `min_price` — минимальная цена
+- `max_price` — максимальная цена
+- `sort_by` — поле сортировки (`created_at` или `price`)
+- `order` — порядок сортировки (`asc` или `desc`)
+
+**Response:**
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Продам велосипед",
+    "description": "Почти новый",
+    "image_url": "https://example.com/image.jpg",
+    "price": 10000,
+    "owner_login": "user1",
+    "is_owner": false,
+    "created_at": "2024-07-21 12:00:00"
+  }
+]
+```
+
+---
+
+## Тесты
+
+```bash
+go test ./...
+```
+
+---
+
+## Технологии
+
+- Go 1.21+
+- Gin
+- GORM
+- PostgreSQL
+- JWT (github.com/golang-jwt/jwt/v5)
+- bcrypt (golang.org/x/crypto)
+- zap (go.uber.org/zap)
+- testify, mockery
+- Docker, docker-compose
+
+---
+
+## Структура проекта
+
+```
+cmd/                # main.go — точка входа
+internal/
+  bootstrap/        # DI-контейнер
+  config/           # конфиг и загрузка из env
+  infra/            # инфраструктурные реализации (Postgres, репозитории)
+  interfaces/       # интерфейсы сервисов и репозиториев
+  logic/            # бизнес-логика
+  handlers/         # HTTP-ручки
+  server/           # запуск HTTP-сервера с graceful shutdown
+  entrypoint/       # сборка и запуск приложения
+models/             # структуры БД
+```
+
+---
+
+## Автор
+
+[github.com/sunr3d](https://github.com/sunr3d)
+
+---

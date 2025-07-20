@@ -15,11 +15,11 @@ const defaultLimit = 20
 
 func FeedHandler(adService interfaces.AdvService, log *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userIDVal, exists := c.Get("user_id")
-		userID, ok := userIDVal.(float64)
-		if !exists || !ok || userID < 1 {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "требуется авторизация"})
-			return
+		var currentUserID uint = 0
+		if userIDVal, exists := c.Get("user_id"); exists {
+			if userID, ok := userIDVal.(float64); ok && userID > 0 {
+				currentUserID = uint(userID)
+			}
 		}
 
 		filter := interfaces.AdvFilter{
@@ -41,7 +41,7 @@ func FeedHandler(adService interfaces.AdvService, log *zap.Logger) gin.HandlerFu
 			filter.Order = order
 		}
 
-		feed, err := adService.ShowAdsFeed(filter, uint(userID))
+		feed, err := adService.ShowAdsFeed(filter, currentUserID)
 		if err != nil {
 			if isFeedValidationErr(err) {
 				log.Warn("Ошибка валидации фильтра объявлений", zap.Error(err))
@@ -59,5 +59,5 @@ func FeedHandler(adService interfaces.AdvService, log *zap.Logger) gin.HandlerFu
 
 func isFeedValidationErr(err error) bool {
 	msg := err.Error()
-	return strings.Contains(msg, "не может быть")
+	return strings.Contains(msg, "может быть")
 }

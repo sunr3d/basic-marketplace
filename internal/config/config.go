@@ -5,10 +5,9 @@ type Config struct {
 	HTTPPort         string   `envconfig:"HTTP_PORT" default:"8080"`
 	HTTPReadTimeout  int      `envconfig:"HTTP_READ_TIMEOUT" default:"10"`
 	HTTPWriteTimeout int      `envconfig:"HTTP_WRITE_TIMEOUT" default:"10"`
-	LogLevel         string   `envconfig:"LOG_LEVEL" default:"debug"`
+	LogLevel         string   `envconfig:"LOG_LEVEL" default:"info"`
 	JWTSecret        string   `envconfig:"JWT_SECRET" default:"secretkey777"`
 	Postgres         Postgres `envconfig:"POSTGRES"`
-	Redis            Redis    `envconfig:"REDIS"`
 }
 
 type Postgres struct {
@@ -17,10 +16,4 @@ type Postgres struct {
 	Username string `envconfig:"USER" default:"postgres"`
 	Password string `envconfig:"PASSWORD" default:"postgres"`
 	Database string `envconfig:"DATABASE" default:"marketplace"`
-}
-
-type Redis struct {
-	Addr     string `envconfig:"ADDR" default:"localhost:6379"`
-	Password string `envconfig:"PASSWORD" default:""`
-	DB       int    `envconfig:"DB" default:"0"`
 }
