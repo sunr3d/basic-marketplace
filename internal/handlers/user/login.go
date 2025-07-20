@@ -4,9 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
 	"go.uber.org/zap"
-
-	"github.com/sunr3d/basic-marketplace/internal/interfaces"
 )
 
 type loginReq struct {

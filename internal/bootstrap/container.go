@@ -8,14 +8,17 @@ import (
 
 	"github.com/sunr3d/basic-marketplace/internal/config"
 	"github.com/sunr3d/basic-marketplace/internal/infra"
-	"github.com/sunr3d/basic-marketplace/internal/interfaces"
+	user_interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
+	adv_interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/adv"
 	"github.com/sunr3d/basic-marketplace/internal/logic"
 )
 
 type Container struct {
-	DB       *gorm.DB
-	UserRepo interfaces.UserRepo
-	UserService interfaces.UserService
+	DB          *gorm.DB
+	UserRepo    user_interfaces.UserRepo
+	UserService user_interfaces.UserService
+	AdvRepo     adv_interfaces.AdvRepo
+	AdvService  adv_interfaces.AdvService
 	// ... другие зависимости, добавим позже
 }
 
@@ -26,11 +29,15 @@ func NewContainer(cfg *config.Config, log *zap.Logger) (*Container, error) {
 	}
 	userRepo := infra.NewUserRepoPG(db)
 	userService := logic.NewUserService(userRepo, []byte(cfg.JWTSecret))
+	advRepo := infra.NewAdvRepoPG(db)
+	advService := logic.NewAdvService(advRepo)
 	// ... еще будут зависимости, типа Редиса для кеширования
 
 	return &Container{
-		DB:       db,
-		UserRepo: userRepo,
+		DB:          db,
+		UserRepo:    userRepo,
 		UserService: userService,
+		AdvRepo:     advRepo,
+		AdvService:  advService,
 	}, nil
 }

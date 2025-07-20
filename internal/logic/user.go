@@ -7,7 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
-	"github.com/sunr3d/basic-marketplace/internal/interfaces"
+	interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
 	"github.com/sunr3d/basic-marketplace/internal/pkg/utils"
 	"github.com/sunr3d/basic-marketplace/models"
 )
@@ -15,7 +15,7 @@ import (
 var _ interfaces.UserService = (*userService)(nil)
 
 type userService struct {
-	UserRepo interfaces.UserRepo
+	UserRepo  interfaces.UserRepo
 	JWTSecret []byte
 }
 
@@ -52,7 +52,7 @@ func (s *userService) RegisterUser(login, password string) (*models.User, error)
 	if err != nil {
 		return nil, fmt.Errorf("CreateUser: %w", err)
 	}
-	
+
 	return user, nil
 }
 
@@ -73,6 +73,6 @@ func (s *userService) AuthUser(login, password string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("не удалось сгенерировать токен: %w", err)
 	}
-	
+
 	return token, nil
 }

@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/sunr3d/basic-marketplace/internal/interfaces"
+	interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
 	"github.com/sunr3d/basic-marketplace/models"
 )
 

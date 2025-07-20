@@ -30,7 +30,7 @@ func Run(cfg *config.Config, log *zap.Logger) error {
 	}
 	log.Info("Миграция модели User прошла успешно")
 
-	// ЧТО-ТО
+	// Создание гин роутера
 	router := gin.New()
 	router.Use(gin.Recovery())
 

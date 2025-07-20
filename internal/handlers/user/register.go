@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	"github.com/sunr3d/basic-marketplace/internal/interfaces"
+	interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
 )
 
 type registerReq struct {
