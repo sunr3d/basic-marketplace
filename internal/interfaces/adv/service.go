@@ -2,20 +2,21 @@ package interfaces
 
 import "github.com/sunr3d/basic-marketplace/models"
 
-type AdInput struct {
+type AdvBase struct {
 	Title string
 	Description string
 	ImageURL string
 	Price float64
+}
+
+type AdInput struct {
+	AdvBase
 	OwnerID uint
 }
 
 type AdvFeedItem struct {
+	AdvBase
 	ID uint
-	Title string
-	Description string
-	ImageURL string
-	Price float64
 	OwnerLogin string
 	IsOwner bool
 	CreatedAt string
