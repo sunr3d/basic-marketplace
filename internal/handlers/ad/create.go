@@ -27,5 +27,6 @@ type createAdvResp struct {
 }
 
 func CreateAdvHandler(adService interfaces.AdvService, log *zap.Logger) gin.HandlerFunc {
-
+	// TODO: Заглушка
+	return nil
 }

@@ -1,9 +1,13 @@
 package logic
 
 import (
+	"fmt"
+
 	interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/adv"
 	"github.com/sunr3d/basic-marketplace/models"
 )
+
+var _ interfaces.AdvService = (*advService)(nil)
 
 type advService struct {
 	AdvRepo interfaces.AdvRepo
@@ -14,7 +18,9 @@ func NewAdvService(repo interfaces.AdvRepo) interfaces.AdvService {
 }
 
 func (s *advService) CreateAd(input interfaces.AdInput) (*models.Adv, error) {
-	// TODO: Валидация
+	if err := validateAdInput(input); err != nil {
+		return nil, fmt.Errorf("validateAdInput: %w", err)
+	}
 
 	adv := &models.Adv{
 		Title:       input.Title,

@@ -10,7 +10,7 @@ type AdvFilter struct {
 	MinPrice float64
 	MaxPrice float64
 }
-
+//go:generate go run github.com/vektra/mockery/v2@v2.53.2 --name=AdvRepo --output=../../../mocks
 type AdvRepo interface {
 	CreateAdv(adv *models.Adv) (*models.Adv, error)
 	FindMany(filter AdvFilter) ([]*models.Adv, error)

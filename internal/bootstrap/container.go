@@ -8,9 +8,10 @@ import (
 
 	"github.com/sunr3d/basic-marketplace/internal/config"
 	"github.com/sunr3d/basic-marketplace/internal/infra"
-	user_interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
 	adv_interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/adv"
-	"github.com/sunr3d/basic-marketplace/internal/logic"
+	user_interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
+	user_logic "github.com/sunr3d/basic-marketplace/internal/logic/user"
+	adv_logic "github.com/sunr3d/basic-marketplace/internal/logic/adv"
 )
 
 type Container struct {
@@ -28,9 +29,9 @@ func NewContainer(cfg *config.Config, log *zap.Logger) (*Container, error) {
 		return nil, fmt.Errorf("infra.InitPostgres: %w", err)
 	}
 	userRepo := infra.NewUserRepoPG(db)
-	userService := logic.NewUserService(userRepo, []byte(cfg.JWTSecret))
+	userService := user_logic.NewUserService(userRepo, []byte(cfg.JWTSecret))
 	advRepo := infra.NewAdvRepoPG(db)
-	advService := logic.NewAdvService(advRepo)
+	advService := adv_logic.NewAdvService(advRepo)
 	// ... еще будут зависимости, типа Редиса для кеширования
 
 	return &Container{
