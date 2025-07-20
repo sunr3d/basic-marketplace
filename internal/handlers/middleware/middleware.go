@@ -10,6 +10,12 @@ import (
 
 func AuthMiddleware(jwtSecret []byte) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		defer func() {
+			if r := recover(); r != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Внутренняя ошибка сервера"})
+			}
+		}()
+
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "требуется авторизация"})
@@ -27,7 +33,13 @@ func AuthMiddleware(jwtSecret []byte) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user_id", claims["user_id"])
+		userID, ok := claims["user_id"]
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Внутренняя ошибка сервера"})
+			return
+		}
+
+		c.Set("user_id", userID)
 		c.Set("login", claims["login"])
 		c.Next()
 	}
