@@ -10,7 +10,7 @@ import (
 var _ interfaces.AdvService = (*advService)(nil)
 
 type advService struct {
-	AdvRepo interfaces.AdvRepo
+	AdvRepo  interfaces.AdvRepo
 }
 
 func NewAdvService(repo interfaces.AdvRepo) interfaces.AdvService {
