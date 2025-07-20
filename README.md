@@ -30,7 +30,7 @@ go run cmd/main.go
 | POSTGRES_HOST     | Адрес Postgres        | localhost       |
 | POSTGRES_PORT     | Порт Postgres         | 5432            |
 | POSTGRES_USER     | Пользователь Postgres | postgres        |
-| POSTGRES_PASSWORD | Пароль Postgres       | password        |
+| POSTGRES_PASSWORD | Пароль Postgres       | postgres        |
 | POSTGRES_DB       | Имя БД                | marketplace     |
 | JWT_SECRET        | Секрет для JWT        | supersecret     |
 | HTTP_HOST         | Адрес HTTP-сервера    | 0.0.0.0         |
