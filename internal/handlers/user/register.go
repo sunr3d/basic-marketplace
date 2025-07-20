@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,8 +32,13 @@ func RegisterHandler(userService interfaces.UserService, log *zap.Logger) gin.Ha
 
 		user, err := userService.RegisterUser(req.Login, req.Password)
 		if err != nil {
-			log.Warn("Ошибка регистрации пользователя", zap.Error(err))
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			if isValidationErr(err) {
+				log.Warn("Ошибка регистрации пользователя", zap.Error(err))
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+			log.Error("Внутреняя ошибка при регистрации пользователя", zap.Error(err))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Внутренняя ошибка сервера"})
 			return
 		}
 
@@ -43,4 +49,11 @@ func RegisterHandler(userService interfaces.UserService, log *zap.Logger) gin.Ha
 		}
 		c.JSON(http.StatusOK, resp)
 	}
+}
+
+func isValidationErr(err error) bool {
+	msg := err.Error()
+	return strings.Contains(msg, "validateLogin") ||
+		strings.Contains(msg, "validatePassword") ||
+		strings.Contains(msg, "уже существует")
 }

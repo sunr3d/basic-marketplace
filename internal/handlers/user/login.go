@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
@@ -27,11 +28,20 @@ func LoginHandler(userService interfaces.UserService, log *zap.Logger) gin.Handl
 
 		token, err := userService.AuthUser(req.Login, req.Password)
 		if err != nil {
-			log.Warn("Ошибка авторизации пользователя", zap.Error(err))
-			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			if isAuthError(err) {
+				log.Warn("Ошибка авторизации пользователя", zap.Error(err))
+				c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+				return
+			}
+			log.Error("Внутреняя ошибка при авторизации пользователя", zap.Error(err))
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Внутреняя ошибка сервера"})
 			return
 		}
 		c.Header("Authorization", "Bearer "+token)
 		c.JSON(http.StatusOK, loginResp{JWT: token})
 	}
+}
+
+func isAuthError(err error) bool {
+	return strings.Contains(err.Error(), "неверный логин или пароль")
 }

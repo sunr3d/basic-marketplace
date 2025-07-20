@@ -75,7 +75,7 @@ func TestLoginHandler_BadRequest(t *testing.T) {
 	log := zap.NewNop()
 
 	router := gin.New()
-	router.POST("/login", LoginHandler(mockService, log))	
+	router.POST("/login", LoginHandler(mockService, log))
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/login", bytes.NewReader([]byte("{")))
@@ -107,6 +107,6 @@ func TestLoginHandler_ServiceError(t *testing.T) {
 
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	mockService.AssertExpectations(t)
 }
