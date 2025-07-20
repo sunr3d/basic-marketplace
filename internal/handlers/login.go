@@ -32,6 +32,7 @@ func LoginHandler(userService interfaces.UserService, log *zap.Logger) gin.Handl
 			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			return
 		}
+		c.Header("Authorization", "Bearer "+token)
 		c.JSON(http.StatusOK, loginResp{JWT: token})
 	}
 }
