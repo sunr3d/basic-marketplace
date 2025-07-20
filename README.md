@@ -77,7 +77,7 @@ go run cmd/main.go
 {
   "id": 1,
   "login": "user1",
-  "created_at": "2024-07-21T12:00:00Z"
+  "created_at": "2025-07-21T12:00:00Z"
 }
 ```
 
@@ -131,7 +131,7 @@ go run cmd/main.go
   "image_url": "https://example.com/image.jpg",
   "price": 10000,
   "owner_id": 1,
-  "created_at": "2024-07-21T12:00:00Z"
+  "created_at": "2025-07-21T12:00:00Z"
 }
 ```
 
@@ -160,7 +160,7 @@ go run cmd/main.go
     "price": 10000,
     "owner_login": "user1",
     "is_owner": false,
-    "created_at": "2024-07-21 12:00:00"
+    "created_at": "2025-07-21 12:00:00"
   }
 ]
 ```
