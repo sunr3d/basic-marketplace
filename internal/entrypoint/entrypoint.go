@@ -11,7 +11,8 @@ import (
 
 	"github.com/sunr3d/basic-marketplace/internal/bootstrap"
 	"github.com/sunr3d/basic-marketplace/internal/config"
-	"github.com/sunr3d/basic-marketplace/internal/handlers"
+	ping_handlers "github.com/sunr3d/basic-marketplace/internal/handlers/ping"
+	user_handlers "github.com/sunr3d/basic-marketplace/internal/handlers/user"
 	"github.com/sunr3d/basic-marketplace/models"
 )
 
@@ -34,9 +35,9 @@ func Run(cfg *config.Config, log *zap.Logger) error {
 	router.Use(gin.Recovery())
 
 	// Регистрация ручек на роутере
-	router.GET("/ping", handlers.PingHandler(log))
-	router.POST("/register", handlers.RegisterHandler(container.UserService, log))
-	router.POST("/login", handlers.LoginHandler(container.UserService, log))
+	router.GET("/ping", ping_handlers.PingHandler(log))
+	router.POST("/register", user_handlers.RegisterHandler(container.UserService, log))
+	router.POST("/login", user_handlers.LoginHandler(container.UserService, log))
 
 	addr := fmt.Sprintf("%s:%s", cfg.HTTPHost, cfg.HTTPPort)
 	go func() {
