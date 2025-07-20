@@ -25,7 +25,7 @@ func NewContainer(cfg *config.Config, log *zap.Logger) (*Container, error) {
 		return nil, fmt.Errorf("infra.InitPostgres: %w", err)
 	}
 	userRepo := infra.NewUserRepoPG(db)
-	userService := logic.NewUserService(userRepo)
+	userService := logic.NewUserService(userRepo, []byte(cfg.JWTSecret))
 	// ... еще будут зависимости, типа Редиса для кеширования
 
 	return &Container{

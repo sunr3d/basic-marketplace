@@ -6,6 +6,7 @@ type Config struct {
 	HTTPReadTimeout  int      `envconfig:"HTTP_READ_TIMEOUT" default:"10"`
 	HTTPWriteTimeout int      `envconfig:"HTTP_WRITE_TIMEOUT" default:"10"`
 	LogLevel         string   `envconfig:"LOG_LEVEL" default:"debug"`
+	JWTSecret        string   `envconfig:"JWT_SECRET" default:"secretkey777"`
 	Postgres         Postgres `envconfig:"POSTGRES"`
 	Redis            Redis    `envconfig:"REDIS"`
 }

@@ -33,8 +33,10 @@ func Run(cfg *config.Config, log *zap.Logger) error {
 	router := gin.New()
 	router.Use(gin.Recovery())
 
+	// Регистрация ручек на роутере
 	router.GET("/ping", handlers.PingHandler(log))
 	router.POST("/register", handlers.RegisterHandler(container.UserService, log))
+	router.POST("/login", handlers.LoginHandler(container.UserService, log))
 
 	addr := fmt.Sprintf("%s:%s", cfg.HTTPHost, cfg.HTTPPort)
 	go func() {
