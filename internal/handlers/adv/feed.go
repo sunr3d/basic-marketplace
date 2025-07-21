@@ -22,11 +22,31 @@ func FeedHandler(adService interfaces.AdvService, log *zap.Logger) gin.HandlerFu
 			}
 		}
 
-		filter := interfaces.AdvFilter{
-			Limit:  defaultLimit,
-			Offset: 0,
+		// Пагинация
+		limit := defaultLimit
+		if limitStr := c.Query("limit"); limitStr != "" {
+			if l, err := strconv.Atoi(limitStr); err == nil && l > 0 && l <= 100 {
+				limit = l
+			}
+		}
+		offset := 0
+		if offsetStr := c.Query("offest"); offsetStr != "" {
+			if o, err := strconv.Atoi(offsetStr); err == nil && o >= 0 {
+				offset = 0
+			}
+		}
+		if pageStr := c.Query("page"); pageStr != "" {
+			if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+				offset = (p - 1) * limit
+			}
 		}
 
+		filter := interfaces.AdvFilter{
+			Limit:  limit,
+			Offset: offset,
+		}
+
+		// Парсинг настроек фильтра
 		if minPriceStr := c.Query("min_price"); minPriceStr != "" {
 			if minPrice, err := strconv.ParseFloat(minPriceStr, 64); err == nil {
 				filter.MinPrice = minPrice
