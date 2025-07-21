@@ -42,6 +42,7 @@ func RegisterHandler(userService interfaces.UserService, log *zap.Logger) gin.Ha
 			return
 		}
 
+		log.Info("Пользователь успешно зарегистрирован", zap.String("login", user.Login), zap.Uint("id", user.ID))
 		resp := registerResp{
 			ID:        user.ID,
 			Login:     user.Login,

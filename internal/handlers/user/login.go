@@ -37,6 +37,8 @@ func LoginHandler(userService interfaces.UserService, log *zap.Logger) gin.Handl
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Внутреняя ошибка сервера"})
 			return
 		}
+		
+		log.Info("Пользователь произвел успешную авторизацию", zap.String("login", req.Login))
 		c.Header("Authorization", "Bearer "+token)
 		c.JSON(http.StatusOK, loginResp{JWT: token})
 	}
