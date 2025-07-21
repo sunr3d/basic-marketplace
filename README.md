@@ -21,6 +21,15 @@ docker-compose up --build
 go run cmd/main.go
 ```
 
+### 3. Запуск через Make
+
+```bash
+make mocks # Сгенерировать моки под интерфейсы
+make test # Запустить все тесты
+make up # Поднять приложение и БД через docker-compose
+make down # Остановить и удалить контейнеры, и зависимости
+```
+
 ---
 
 ## Переменные окружения
