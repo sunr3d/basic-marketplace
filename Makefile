@@ -11,4 +11,4 @@ up:
 	docker-compose up --build 
 
 down:
-	docker-compose -v down
+	docker-compose down -v
