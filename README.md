@@ -118,7 +118,7 @@ make clean # Удалить сгенерированные моки
 
 ```json
 {
-  "token": "jwt_token"
+  "jwt": "jwt_token"
 }
 ```
 
