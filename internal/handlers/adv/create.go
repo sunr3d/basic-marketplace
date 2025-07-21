@@ -65,6 +65,7 @@ func CreateAdvHandler(adService interfaces.AdvService, log *zap.Logger) gin.Hand
 			return
 		}
 
+		log.Info("Объявление успешно создано", zap.Uint("id", adv.ID), zap.Uint("owner_id", adv.OwnerID))
 		resp := createAdvResp{
 			ID:          adv.ID,
 			Title:       adv.Title,

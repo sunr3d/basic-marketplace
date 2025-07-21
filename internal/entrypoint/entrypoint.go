@@ -37,7 +37,7 @@ func Run(cfg *config.Config, log *zap.Logger) error {
 	router.GET("/ping", ping_handlers.PingHandler(log))
 	router.POST("/register", user_handlers.RegisterHandler(container.UserService, log))
 	router.POST("/login", user_handlers.LoginHandler(container.UserService, log))
-	router.GET("/ads", adv_handlers.FeedHandler(container.AdvService, log))
+	router.GET("/ads", middleware.AuthMiddleware([]byte(cfg.JWTSecret), true),adv_handlers.FeedHandler(container.AdvService, log))
 
 	auth := router.Group("/")
 	auth.Use(middleware.AuthMiddleware([]byte(cfg.JWTSecret)))

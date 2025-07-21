@@ -53,6 +53,7 @@ func FeedHandler(adService interfaces.AdvService, log *zap.Logger) gin.HandlerFu
 			return
 		}
 
+		log.Info("Лента объявлений успешно получена", zap.Int("count", len(feed)))
 		c.JSON(http.StatusOK, feed)
 	}
 }
