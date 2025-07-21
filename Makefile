@@ -1,4 +1,4 @@
-.PHONY: mocks test up down
+.PHONY: mocks test up down clean
 
 test: mocks
 	go test -v ./...
@@ -12,3 +12,6 @@ up:
 
 down:
 	docker-compose down -v
+
+clean:
+	rm -rf mocks/
