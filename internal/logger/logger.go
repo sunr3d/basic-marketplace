@@ -14,11 +14,11 @@ func New(logLevel string) *zap.Logger {
 	}
 
 	cfg := zap.Config{
-		Level: zap.NewAtomicLevelAt(lvl),
-		Encoding: "json",
-		OutputPaths: []string{"stdout"},
+		Level:            zap.NewAtomicLevelAt(lvl),
+		Encoding:         "json",
+		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
-		EncoderConfig: zap.NewProductionEncoderConfig(),
+		EncoderConfig:    zap.NewProductionEncoderConfig(),
 	}
 
 	logger, err := cfg.Build()

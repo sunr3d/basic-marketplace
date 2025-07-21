@@ -10,8 +10,8 @@ import (
 	"github.com/sunr3d/basic-marketplace/internal/infra"
 	adv_interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/adv"
 	user_interfaces "github.com/sunr3d/basic-marketplace/internal/interfaces/user"
-	user_logic "github.com/sunr3d/basic-marketplace/internal/logic/user"
 	adv_logic "github.com/sunr3d/basic-marketplace/internal/logic/adv"
+	user_logic "github.com/sunr3d/basic-marketplace/internal/logic/user"
 )
 
 type Container struct {

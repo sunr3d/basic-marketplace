@@ -72,10 +72,10 @@ func TestAuthMiddleware_NoIDClaims(t *testing.T) {
 	router.GET("/protected", AuthMiddleware(testSecret), func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"ok": true})
 	})
-	
+
 	claims := jwt.MapClaims{
 		"login": "testuser",
-		"exp": 9999999999,
+		"exp":   9999999999,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenStr, _ := token.SignedString(testSecret)
@@ -104,5 +104,5 @@ func TestAuthMiddleware_PanicRec(t *testing.T) {
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Contains(t, w.Body.String(), "Внутренняя ошибка сервера")
-	
+
 }

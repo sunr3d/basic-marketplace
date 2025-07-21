@@ -15,7 +15,7 @@ func AuthMiddleware(jwtSecret []byte, optional ...bool) gin.HandlerFunc {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Внутренняя ошибка сервера"})
 			}
 		}()
-    
+
 		isOptional := len(optional) > 0 && optional[0]
 
 		authHeader := c.GetHeader("Authorization")
@@ -30,7 +30,7 @@ func AuthMiddleware(jwtSecret []byte, optional ...bool) gin.HandlerFunc {
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 		claims := jwt.MapClaims{}
-		
+
 		token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (any, error) {
 			return jwtSecret, nil
 		})

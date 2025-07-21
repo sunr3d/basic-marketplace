@@ -29,7 +29,7 @@ func TestValidateLogin(t *testing.T) {
 func TestValidatePassword(t *testing.T) {
 	tests := []struct {
 		password string
-		wantErr bool
+		wantErr  bool
 	}{
 		{"password123", false},
 		{"short", true},

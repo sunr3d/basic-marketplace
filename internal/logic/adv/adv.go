@@ -10,7 +10,7 @@ import (
 var _ interfaces.AdvService = (*advService)(nil)
 
 type advService struct {
-	AdvRepo  interfaces.AdvRepo
+	AdvRepo interfaces.AdvRepo
 }
 
 func NewAdvService(repo interfaces.AdvRepo) interfaces.AdvService {
@@ -36,7 +36,7 @@ func (s *advService) ShowAdsFeed(filter interfaces.AdvFilter, currentUserID uint
 	if err := validateAdvFilter(filter); err != nil {
 		return nil, fmt.Errorf("validateAdvFilter: %w", err)
 	}
-	
+
 	ads, err := s.AdvRepo.FindMany(filter)
 	if err != nil {
 		return nil, fmt.Errorf("FindMany: %w", err)
@@ -46,15 +46,15 @@ func (s *advService) ShowAdsFeed(filter interfaces.AdvFilter, currentUserID uint
 	for _, adv := range ads {
 		feed = append(feed, interfaces.AdvFeedItem{
 			AdvBase: interfaces.AdvBase{
-				Title: adv.Title,
+				Title:       adv.Title,
 				Description: adv.Description,
-				ImageURL: adv.ImageURL,
-				Price: adv.Price,
+				ImageURL:    adv.ImageURL,
+				Price:       adv.Price,
 			},
-			ID: adv.ID,
+			ID:         adv.ID,
 			OwnerLogin: adv.OwnerLogin,
-			IsOwner: adv.OwnerID == currentUserID,
-			CreatedAt: adv.CreatedAt.Format("2006-01-02 15:04:05"),
+			IsOwner:    adv.OwnerID == currentUserID,
+			CreatedAt:  adv.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 	return feed, nil

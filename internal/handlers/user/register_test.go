@@ -74,7 +74,7 @@ func TestRegisterHandler_ServiceError(t *testing.T) {
 	router.POST("/register", RegisterHandler(mockService, log))
 
 	reqBody := map[string]string{
-		"login": "baduser",
+		"login":    "baduser",
 		"password": "badpass",
 	}
 	body, _ := json.Marshal(reqBody)

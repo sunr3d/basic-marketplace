@@ -3,10 +3,10 @@ package interfaces
 import "github.com/sunr3d/basic-marketplace/models"
 
 type AdvBase struct {
-	Title string
+	Title       string
 	Description string
-	ImageURL string
-	Price float64
+	ImageURL    string
+	Price       float64
 }
 
 type AdInput struct {
@@ -16,11 +16,12 @@ type AdInput struct {
 
 type AdvFeedItem struct {
 	AdvBase
-	ID uint
+	ID         uint
 	OwnerLogin string
-	IsOwner bool
-	CreatedAt string
+	IsOwner    bool
+	CreatedAt  string
 }
+
 //go:generate go run github.com/vektra/mockery/v2@v2.53.2 --name=AdvService --output=../../../mocks
 type AdvService interface {
 	CreateAd(input AdInput) (*models.Adv, error)
